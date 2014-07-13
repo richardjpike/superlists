@@ -19,6 +19,29 @@ class NewVisitorTest(LiveServerTestCase):
 
 
 	""" Tests must start with the word test to run """
+	def test_layout_and_styling(self):
+		# Edith goes to the home page
+		self.browser.get(self.live_server_url)
+		self.browser.set_window_size(1024,768)
+
+		# She notices that the input box is nicely centered
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(
+				inputbox.location['x'] + inputbox.size['width'] / 2,
+				512,
+				delta=5
+			)
+
+		# She starts a new list and sees that the input is nicely centered there also
+		inputbox.send_keys('testing\n')
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(
+				inputbox.location['x'] + inputbox.size['width'] / 2,
+				512,
+				delta=5
+			)
+
+
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		# Edith has heard about a cool new online todo app.  She goes to checkout it's homepage.
 		self.browser.get(self.live_server_url)
