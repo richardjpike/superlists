@@ -6,19 +6,21 @@ import sys
 
 class NewVisitorTest(StaticLiveServerCase):
 
+	#  http://RichardP.pythonanywhere.com/
+	
 	@classmethod
-	def setupClass(cls):
+	def setUpClass(cls):
 		for arg in sys.argv:
 			if 'liveserver' in arg:
 				cls.server_url = 'http://' + arg.split('=')[1]
 				return
-			super().setUpClass()
-			cls.server_url = cls.live_server_url
+		super().setUpClass()
+		cls.server_url = cls.live_server_url
 
 	@classmethod
-	def tearDownCLass(cls):
+	def tearDownClass(cls):
 		if cls.server_url == cls.live_server_url:
-			super().tearDownCLass()
+			super().tearDownClass()
 
 	def setUp(self):
 		self.browser = webdriver.Firefox()
@@ -32,34 +34,9 @@ class NewVisitorTest(StaticLiveServerCase):
 		rows = table.find_elements_by_tag_name('tr')
 		self.assertIn(row_text, [row.text for row in rows])
 
-
-	""" Tests must start with the word test to run """
-	def test_layout_and_styling(self):
-		# Edith goes to the home page
-		self.browser.get(self.live_server_url)
-		self.browser.set_window_size(1024,768)
-
-		# She notices that the input box is nicely centered
-		inputbox = self.browser.find_element_by_id('id_new_item')
-		self.assertAlmostEqual(
-				inputbox.location['x'] + inputbox.size['width'] / 2,
-				512,
-				delta=5
-			)
-
-		# She starts a new list and sees that the input is nicely centered there also
-		inputbox.send_keys('testing\n')
-		inputbox = self.browser.find_element_by_id('id_new_item')
-		self.assertAlmostEqual(
-				inputbox.location['x'] + inputbox.size['width'] / 2,
-				512,
-				delta=5
-			)
-
-
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		# Edith has heard about a cool new online todo app.  She goes to checkout it's homepage.
-		self.browser.get(self.live_server_url)
+		self.browser.get(self.server_url)
 
 		# She notices the page title and header menton to-do lists
 		self.assertIn('To-Do', self.browser.title)
@@ -104,7 +81,7 @@ class NewVisitorTest(StaticLiveServerCase):
 		self.browser.implicitly_wait(3)
 
 		# Francis visits the homepage - there is no sign of Ediths list.
-		self.browser.get(self.live_server_url)
+		self.browser.get(self.server_url)
 		page_text = self.browser.find_element_by_tag_name('body').text
 		self.assertNotIn('Buy Peacock Feathers', page_text)
 		self.assertNotIn('make a fly', page_text)
@@ -124,6 +101,28 @@ class NewVisitorTest(StaticLiveServerCase):
 		self.assertNotIn('Buy Peacock Feathers', page_text)
 		self.assertIn('Buy milk', page_text)
 
-
 		# Satisfied - they both go back to sleep.
+
+	def test_layout_and_styling(self):
+		# Edith goes to the home page
+		self.browser.get(self.server_url)
+		self.browser.set_window_size(1024,768)
+
+		# She notices that the input box is nicely centered
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(
+				inputbox.location['x'] + inputbox.size['width'] / 2,
+				512,
+				delta=5
+			)
+
+		# She starts a new list and sees that the input is nicely centered there also
+		inputbox.send_keys('testing\n')
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(
+				inputbox.location['x'] + inputbox.size['width'] / 2,
+				512,
+				delta=5
+			)
+
 
